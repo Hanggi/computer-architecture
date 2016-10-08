@@ -74,16 +74,16 @@ I can see Russia from my house!
   400f6e:	48 83 ec 28          	sub    $0x28,%rsp
   400f72:	48 89 e6             	mov    %rsp,%rsi
   400f75:	e8 14 08 00 00       	callq  40178e <read_six_numbers>
-  400f7a:	83 3c 24 00          	cmpl   $0x0,(%rsp)                  # [1] == 0
+  400f7a:	83 3c 24 00          	cmpl   $0x0,(%rsp)              # [1] == 0
   400f7e:	75 07                	jne    400f87 <phase_2+0x1b>
-  400f80:	83 7c 24 04 01       	cmpl   $0x1,0x4(%rsp)               # [2] == 1
+  400f80:	83 7c 24 04 01       	cmpl   $0x1,0x4(%rsp)           # [2] == 1
   400f85:	74 05                	je     400f8c <phase_2+0x20>
   400f87:	e8 a1 06 00 00       	callq  40162d <explode_bomb>
-  400f8c:	48 8d 5c 24 08       	lea    0x8(%rsp),%rbx               # rbx = [3]
-  400f91:	48 8d 6c 24 18       	lea    0x18(%rsp),%rbp              # rbp = [7]
-  400f96:	8b 43 f8             	mov    -0x8(%rbx),%eax              # eax = [1]
-  400f99:	03 43 fc             	add    -0x4(%rbx),%eax              # eax = [n]+[n+1]
-  400f9c:	39 03                	cmp    %eax,(%rbx)                  # eax ?= [n+2]
+  400f8c:	48 8d 5c 24 08       	lea    0x8(%rsp),%rbx           # rbx = [3]
+  400f91:	48 8d 6c 24 18       	lea    0x18(%rsp),%rbp          # rbp = [7]
+  400f96:	8b 43 f8             	mov    -0x8(%rbx),%eax          # eax = [1]
+  400f99:	03 43 fc             	add    -0x4(%rbx),%eax          # eax = [n]+[n+1]
+  400f9c:	39 03                	cmp    %eax,(%rbx)              # eax ?= [n+2]
   400f9e:	74 05                	je     400fa5 <phase_2+0x39>
   400fa0:	e8 88 06 00 00       	callq  40162d <explode_bomb>
   400fa5:	48 83 c3 04          	add    $0x4,%rbx
@@ -100,4 +100,88 @@ I can see Russia from my house!
 
 ```
 0 1 1 2 3 5
+```
+
+
+### Phase 3
+
+第三题也有几种情况。
+
+这次要输入的格式是两个整型。
+
+> %d %d
+
+首先这里， 输入的第一个数不能大于7.
+
+```asm
+400fd7:	83 7c 24 08 07       	cmpl   $0x7,0x8(%rsp)
+400fdc:	77 66                	ja     401044 <phase_3+0x94>
+```
+
+接下来看着像一个 switch：
+
+其中一个情况是，到最后会用第一个参数选的那个值与我们的第二个参数作比较。一样就通过
+
+```asm
+400fee:	b8 4e 00 00 00       	mov    $0x4e,%eax
+400ff3:	eb 3b                	jmp    401030 <phase_3+0x7b>
+400ff5:	b8 9a 03 00 00       	mov    $0x39a,%eax
+400ffa:	eb 34                	jmp    401030 <phase_3+0x7b>
+
+    ...
+
+401030:	3b 44 24 0c          	cmp    0xc(%rsp),%eax
+401034:	74 05                	je     40103b <phase_3+0x86>
+401036:	e8 f2 05 00 00       	callq  40162d <explode_bomb>
+40103b:	48 83 c4 18          	add    $0x18,%rsp
+40103f:	c3                   	retq   
+```
+
+因为 `0x4e` 的值等于 78 所以最后的结果是：
+
+```
+0 78
+```
+
+**********************************************
+
+还有一种情况是switch没有break，很讨厌了，
+
+```asm
+400fe9:	b8 00 00 00 00       	mov    $0x0,%eax
+400fee:	eb 05                	jmp    400ff5 <phase_3+0x45>
+400ff0:	b8 50 00 00 00       	mov    $0x50,%eax
+400ff5:	2d f7 00 00 00       	sub    $0xf7,%eax
+400ffa:	eb 05                	jmp    401001 <phase_3+0x51>
+400ffc:	b8 00 00 00 00       	mov    $0x0,%eax
+401001:	05 bb 00 00 00       	add    $0xbb,%eax
+401006:	eb 05                	jmp    40100d <phase_3+0x5d>
+401008:	b8 00 00 00 00       	mov    $0x0,%eax
+40100d:	2d 1a 03 00 00       	sub    $0x31a,%eax
+401012:	eb 05                	jmp    401019 <phase_3+0x69>
+401014:	b8 00 00 00 00       	mov    $0x0,%eax
+401019:	05 1a 03 00 00       	add    $0x31a,%eax
+40101e:	eb 05                	jmp    401025 <phase_3+0x75>
+401020:	b8 00 00 00 00       	mov    $0x0,%eax
+401025:	2d 1a 03 00 00       	sub    $0x31a,%eax
+40102a:	eb 05                	jmp    401031 <phase_3+0x81>
+40102c:	b8 00 00 00 00       	mov    $0x0,%eax
+401031:	05 1a 03 00 00       	add    $0x31a,%eax
+401036:	eb 05                	jmp    40103d <phase_3+0x8d>
+401038:	b8 00 00 00 00       	mov    $0x0,%eax
+40103d:	2d 1a 03 00 00       	sub    $0x31a,%eax
+401042:	eb 0a                	jmp    40104e <phase_3+0x9e>
+```
+
+而且除了不能大于7还有个一判断在最后
+
+```asm
+40104e:	83 7c 24 08 05       	cmpl   $0x5,0x8(%rsp)
+401053:	7f 06                	jg     40105b <phase_3+0xab>
+```
+
+大于5就爆炸，所以选最后一项省事是不可以的。幸好最后几项都是加减同一数，最后结果也是 0，所以最后结果是：
+
+```
+4 0
 ```
