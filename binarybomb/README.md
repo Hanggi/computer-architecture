@@ -1,6 +1,8 @@
 # Binary Bomb
 
-### Phase 1
+此乃传说中的二进制炸弹游戏。。。说她是游戏吧。。。看能不能享受他了。
+
+## Phase 1
 
 ```
 0000000000400f50 <phase_1>:
@@ -15,7 +17,7 @@ I can see Russia from my house!
 ```
 
 
-### Phase 2
+## Phase 2
 
 这道题要求输入某种格式的 6 个数字到 read_six_numbers。
 
@@ -105,7 +107,7 @@ I can see Russia from my house!
 ```
 
 
-### Phase 3
+## Phase 3
 
 第三题也有几种情况。
 
@@ -225,7 +227,7 @@ I can see Russia from my house!
 ```
 
 
-### Phase 4:
+## Phase 4:
 
 这一题太坑爹了，网上的版本是输入一个数，然后进到 `func4` 里面是一个斐波那契数列。
 输入的数作为斐波那契数列的输出项。
