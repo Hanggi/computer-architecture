@@ -15,7 +15,7 @@ I can see Russia from my house!
 ```
 
 
-### Phase 2
+## Phase 2
 
 这道题要求输入某种格式的 6 个数字到 read_six_numbers。
 
@@ -31,7 +31,7 @@ I can see Russia from my house!
 这题没找到什么简单的方法，只能一行一行看。
 
 
-#### 几种题型, 其中一种是从0开始加n，n++。
+##### 几种题型, 其中一种是从0开始加n，n++。
 
 ```asm
 0000000000400f6c <phase_2>:
