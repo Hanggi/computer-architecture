@@ -1,0 +1,546 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+	# Loop header
+	xorq %rax,%rax		# count = 0;
+	andq %rdx,%rdx		# len <= 0?
+	jle Done		# if so, goto Done:
+
+	iaddq $-64, %rdx
+	jg Loop
+	iaddq $64, %rdx
+	addq %rdx, %rdx
+	addq %rdx, %rdx
+	mrmovq Jump(%rdx), %rdx
+	pushq %rdx
+	ret
+
+Loop:	
+	mrmovq (%rdi), %r10	# read val from src...
+	rmmovq %r10, (%rsi)	# ...and store it to dst
+	andq %r10, %r10		# val <= 0?
+	# jle Npos		# if so, goto Npos:
+	jg Npos
+	
+	# irmovq $1, %r10
+	# addq %r10, %rax		# count++
+	iaddq $1, %rax		#■■■■■■
+
+Npos:	
+	# irmovq $1, %r10
+	# subq %r10, %rdx		# len--
+	iaddq $-1, %rdx		#■■■■■■
+	
+	# irmovq $8, %r10
+	# addq %r10, %rdi		# src++
+	iaddq $8, %rdi		#■■■■■■
+
+	# addq %r10, %rsi		# dst++
+	iaddq $8, %rsi		#■■■■■■
+
+	jg Loop
+	jmp Done
+
+	# andq %rdx,%rdx		# len > 0?
+	# jg Loop			# if so, goto Loop:
+
+
+Nod64:
+	mrmovq 0xfc(%rdi), %r10	
+	rmmovq %r10, 0xfc(%rsi)
+	andq %r10, %r10
+	jg Nod63
+	iaddq $1, %rax
+Nod63:
+	mrmovq 0xf8(%rdi), %r10	
+	rmmovq %r10, 0xf8(%rsi)
+	andq %r10, %r10
+	jg Nod62
+	iaddq $1, %rax
+Nod62:
+	mrmovq 0xf4(%rdi), %r10	
+	rmmovq %r10, 0xf4(%rsi)
+	andq %r10, %r10
+	jg Nod61
+	iaddq $1, %rax
+Nod61:
+	mrmovq 0xf0(%rdi), %r10	
+	rmmovq %r10, 0xf0(%rsi)
+	andq %r10, %r10
+	jg Nod60
+	iaddq $1, %rax
+Nod60:
+	mrmovq 0xec(%rdi), %r10	
+	rmmovq %r10, 0xec(%rsi)
+	andq %r10, %r10
+	jg Nod59
+	iaddq $1, %rax
+
+
+Nod59:
+	mrmovq 0xe8(%rdi), %r10	
+	rmmovq %r10, 0xe8(%rsi)
+	andq %r10, %r10
+	jg Nod58
+	iaddq $1, %rax
+Nod58:
+	mrmovq 0xe4(%rdi), %r10	
+	rmmovq %r10, 0xe4(%rsi)
+	andq %r10, %r10
+	jg Nod57
+	iaddq $1, %rax
+Nod57:
+	mrmovq 0xe0(%rdi), %r10	
+	rmmovq %r10, 0xe0(%rsi)
+	andq %r10, %r10
+	jg Nod56
+	iaddq $1, %rax
+Nod56:
+	mrmovq 0xdc(%rdi), %r10	
+	rmmovq %r10, 0xdc(%rsi)
+	andq %r10, %r10
+	jg Nod55
+	iaddq $1, %rax
+Nod55:
+	mrmovq 0xd8(%rdi), %r10	
+	rmmovq %r10, 0xd8(%rsi)
+	andq %r10, %r10
+	jg Nod55
+	iaddq $1, %rax
+
+
+Nod54:
+	mrmovq 0xd4(%rdi), %r10	
+	rmmovq %r10, 0xd4(%rsi)
+	andq %r10, %r10
+	jg Nod53
+	iaddq $1, %rax
+Nod53:
+	mrmovq 0xd0(%rdi), %r10	
+	rmmovq %r10, 0xd0(%rsi)
+	andq %r10, %r10
+	jg Nod52
+	iaddq $1, %rax
+Nod52:
+	mrmovq 0xcc(%rdi), %r10	
+	rmmovq %r10, 0xcc(%rsi)
+	andq %r10, %r10
+	jg Nod51
+	iaddq $1, %rax
+Nod51:
+	mrmovq 0xc8(%rdi), %r10	
+	rmmovq %r10, 0xc8(%rsi)
+	andq %r10, %r10
+	jg Nod50
+	iaddq $1, %rax
+Nod50:
+	mrmovq 0xc4(%rdi), %r10	
+	rmmovq %r10, 0xc4(%rsi)
+	andq %r10, %r10
+	jg Nod49
+	iaddq $1, %rax
+
+
+Nod49:
+	mrmovq 0xc0(%rdi), %r10	
+	rmmovq %r10, 0xc0(%rsi)
+	andq %r10, %r10
+	jg Nod48
+	iaddq $1, %rax
+Nod48:
+	mrmovq 0xbc(%rdi), %r10	
+	rmmovq %r10, 0xbc(%rsi)
+	andq %r10, %r10
+	jg Nod47
+	iaddq $1, %rax
+Nod47:
+	mrmovq 0xb8(%rdi), %r10	
+	rmmovq %r10, 0xb8(%rsi)
+	andq %r10, %r10
+	jg Nod46
+	iaddq $1, %rax
+Nod46:
+	mrmovq 0xb4(%rdi), %r10	
+	rmmovq %r10, 0xb4(%rsi)
+	andq %r10, %r10
+	jg Nod45
+	iaddq $1, %rax
+Nod45:
+	mrmovq 0xb0(%rdi), %r10	
+	rmmovq %r10, 0xb0(%rsi)
+	andq %r10, %r10
+	jg Nod44
+	iaddq $1, %rax
+
+
+Nod44:
+	mrmovq 0xac(%rdi), %r10	
+	rmmovq %r10, 0xac(%rsi)
+	andq %r10, %r10
+	jg Nod43
+	iaddq $1, %rax
+Nod43:
+	mrmovq 0xa8(%rdi), %r10	
+	rmmovq %r10, 0xa8(%rsi)
+	andq %r10, %r10
+	jg Nod42
+	iaddq $1, %rax
+Nod42:
+	mrmovq 0xa4(%rdi), %r10	
+	rmmovq %r10, 0xa4(%rsi)
+	andq %r10, %r10
+	jg Nod41
+	iaddq $1, %rax
+Nod41:
+	mrmovq 0xa0(%rdi), %r10	
+	rmmovq %r10, 0xa0(%rsi)
+	andq %r10, %r10
+	jg Nod40
+	iaddq $1, %rax
+Nod40:
+	mrmovq 0x9c(%rdi), %r10	
+	rmmovq %r10, 0x9c(%rsi)
+	andq %r10, %r10
+	jg Nod39
+	iaddq $1, %rax
+
+
+Nod39:
+	mrmovq 0x98(%rdi), %r10	
+	rmmovq %r10, 0x98(%rsi)
+	andq %r10, %r10
+	jg Nod38
+	iaddq $1, %rax
+Nod38:
+	mrmovq 0x94(%rdi), %r10	
+	rmmovq %r10, 0x94(%rsi)
+	andq %r10, %r10
+	jg Nod37
+	iaddq $1, %rax
+Nod37:
+	mrmovq 0x90(%rdi), %r10	
+	rmmovq %r10, 0x90(%rsi)
+	andq %r10, %r10
+	jg Nod36
+	iaddq $1, %rax
+Nod36:
+	mrmovq 0x8c(%rdi), %r10	
+	rmmovq %r10, 0x8c(%rsi)
+	andq %r10, %r10
+	jg Nod35
+	iaddq $1, %rax
+Nod35:
+	mrmovq 0x88(%rdi), %r10	
+	rmmovq %r10, 0x88(%rsi)
+	andq %r10, %r10
+	jg Nod34
+	iaddq $1, %rax
+
+
+Nod34:
+	mrmovq 0x84(%rdi), %r10	
+	rmmovq %r10, 0x84(%rsi)
+	andq %r10, %r10
+	jg Nod33
+	iaddq $1, %rax
+Nod33:
+	mrmovq 0x80(%rdi), %r10	
+	rmmovq %r10, 0x80(%rsi)
+	andq %r10, %r10
+	jg Nod32
+	iaddq $1, %rax
+Nod32:
+	mrmovq 0x7c(%rdi), %r10	
+	rmmovq %r10, 0x7c(%rsi)
+	andq %r10, %r10
+	jg Nod31
+	iaddq $1, %rax
+Nod31:
+	mrmovq 0x78(%rdi), %r10	
+	rmmovq %r10, 0x78(%rsi)
+	andq %r10, %r10
+	jg Nod30
+	iaddq $1, %rax
+Nod30:
+	mrmovq 0x74(%rdi), %r10	
+	rmmovq %r10, 0x74(%rsi)
+	andq %r10, %r10
+	jg Nod29
+	iaddq $1, %rax
+
+
+Nod29:
+	mrmovq 0x70(%rdi), %r10	
+	rmmovq %r10, 0x70(%rsi)
+	andq %r10, %r10
+	jg Nod28
+	iaddq $1, %rax
+Nod28:
+	mrmovq 0x6c(%rdi), %r10	
+	rmmovq %r10, 0x6c(%rsi)
+	andq %r10, %r10
+	jg Nod27
+	iaddq $1, %rax
+Nod27:
+	mrmovq 0x68(%rdi), %r10	
+	rmmovq %r10, 0x68(%rsi)
+	andq %r10, %r10
+	jg Nod26
+	iaddq $1, %rax
+Nod26:
+	mrmovq 0x64(%rdi), %r10	
+	rmmovq %r10, 0x64(%rsi)
+	andq %r10, %r10
+	jg Nod25
+	iaddq $1, %rax
+Nod25:
+	mrmovq 0x60(%rdi), %r10	
+	rmmovq %r10, 0x60(%rsi)
+	andq %r10, %r10
+	jg Nod24
+	iaddq $1, %rax
+
+
+Nod24:
+	mrmovq 0x5c(%rdi), %r10	
+	rmmovq %r10, 0x5c(%rsi)
+	andq %r10, %r10
+	jg Nod23
+	iaddq $1, %rax
+Nod23:
+	mrmovq 0x58(%rdi), %r10	
+	rmmovq %r10, 0x58(%rsi)
+	andq %r10, %r10
+	jg Nod22
+	iaddq $1, %rax
+Nod22:
+	mrmovq 0x54(%rdi), %r10	
+	rmmovq %r10, 0x54(%rsi)
+	andq %r10, %r10
+	jg Nod21
+	iaddq $1, %rax
+Nod21:
+	mrmovq 0x50(%rdi), %r10	
+	rmmovq %r10, 0x50(%rsi)
+	andq %r10, %r10
+	jg Nod20
+	iaddq $1, %rax
+Nod20:
+	mrmovq 0x4c(%rdi), %r10	
+	rmmovq %r10, 0x4c(%rsi)
+	andq %r10, %r10
+	jg Nod19
+	iaddq $1, %rax
+
+
+Nod19:
+	mrmovq 0x48(%rdi), %r10	
+	rmmovq %r10, 0x48(%rsi)
+	andq %r10, %r10
+	jg Nod18
+	iaddq $1, %rax
+Nod18:
+	mrmovq 0x44(%rdi), %r10	
+	rmmovq %r10, 0x44(%rsi)
+	andq %r10, %r10
+	jg Nod17
+	iaddq $1, %rax
+Nod17:
+	mrmovq 0x40(%rdi), %r10	
+	rmmovq %r10, 0x40(%rsi)
+	andq %r10, %r10
+	jg Nod16
+	iaddq $1, %rax
+Nod16:
+	mrmovq 0x3c(%rdi), %r10	
+	rmmovq %r10, 0x3c(%rsi)
+	andq %r10, %r10
+	jg Nod15
+	iaddq $1, %rax
+Nod15:
+	mrmovq 0x38(%rdi), %r10	
+	rmmovq %r10, 0x38(%rsi)
+	andq %r10, %r10
+	jg Nod14
+	iaddq $1, %rax
+
+
+Nod14:
+	mrmovq 0x34(%rdi), %r10	
+	rmmovq %r10, 0x34(%rsi)
+	andq %r10, %r10
+	jg Nod13
+	iaddq $1, %rax
+Nod13:
+	mrmovq 0x30(%rdi), %r10	
+	rmmovq %r10, 0x30(%rsi)
+	andq %r10, %r10
+	jg Nod12
+	iaddq $1, %rax
+Nod12:
+	mrmovq 0x2c(%rdi), %r10	
+	rmmovq %r10, 0x2c(%rsi)
+	andq %r10, %r10
+	jg Nod11
+	iaddq $1, %rax
+Nod11:
+	mrmovq 0x28(%rdi), %r10	
+	rmmovq %r10, 0x28(%rsi)
+	andq %r10, %r10
+	jg Nod10
+	iaddq $1, %rax
+Nod10:
+	mrmovq 0x24(%rdi), %r10	
+	rmmovq %r10, 0x24(%rsi)
+	andq %r10, %r10
+	jg Nod9
+	iaddq $1, %rax
+
+
+Nod9:
+	mrmovq 0x20(%rdi), %r10	
+	rmmovq %r10, 0x48(%rsi)
+	andq %r10, %r10
+	jg Nod8
+	iaddq $1, %rax
+Nod8:
+	mrmovq 0x44(%rdi), %r10	
+	rmmovq %r10, 0x20(%rsi)
+	andq %r10, %r10
+	jg Nod7
+	iaddq $1, %rax
+Nod7:
+	mrmovq 0x1c(%rdi), %r10	
+	rmmovq %r10, 0x1c(%rsi)
+	andq %r10, %r10
+	jg Nod6
+	iaddq $1, %rax
+Nod6:
+	mrmovq 0x18(%rdi), %r10	
+	rmmovq %r10, 0x18(%rsi)
+	andq %r10, %r10
+	jg Nod5
+	iaddq $1, %rax
+Nod5:
+	mrmovq 0x14(%rdi), %r10	
+	rmmovq %r10, 0x14(%rsi)
+	andq %r10, %r10
+	jg Nod4
+	iaddq $1, %rax
+
+
+Nod4:
+	mrmovq 0x10(%rdi), %r10	
+	rmmovq %r10, 0x10(%rsi)
+	andq %r10, %r10
+	jg Nod3
+	iaddq $1, %rax
+Nod3:
+	mrmovq 0xc(%rdi), %r10	
+	rmmovq %r10, 0xc(%rsi)
+	andq %r10, %r10
+	jg Nod2
+	iaddq $1, %rax
+Nod2:
+	mrmovq 0x8(%rdi), %r10	
+	rmmovq %r10, 0x8(%rsi)
+	andq %r10, %r10
+	jg Nod1
+	iaddq $1, %rax
+Nod1:
+	mrmovq 0x4(%rdi), %r10	
+	rmmovq %r10, 0x4(%rsi)
+	andq %r10, %r10
+	jg Done
+	iaddq $1, %rax
+
+
+
+
+Jump:	
+	.long Done
+	.long Nod1
+	.long Nod2
+	.long Nod3
+	.long Nod4
+	.long Nod5
+	.long Nod6
+	.long Nod7
+	.long Nod8
+	.long Nod9
+	.long Nod10
+	.long Nod11
+	.long Nod12
+	.long Nod13
+	.long Nod14
+	.long Nod15
+	.long Nod16
+	.long Nod17
+	.long Nod18
+	.long Nod19
+	.long Nod20
+	.long Nod21
+	.long Nod22
+	.long Nod23
+	.long Nod24
+	.long Nod25
+	.long Nod26
+	.long Nod27
+	.long Nod28
+	.long Nod29
+	.long Nod30
+	.long Nod31
+	.long Nod32
+	.long Nod33
+	.long Nod34
+	.long Nod35
+	.long Nod36
+	.long Nod37
+	.long Nod38
+	.long Nod39
+	.long Nod40
+	.long Nod41
+	.long Nod42
+	.long Nod43
+	.long Nod44
+	.long Nod45
+	.long Nod46
+	.long Nod47
+	.long Nod48
+	.long Nod49
+	.long Nod50
+	.long Nod51
+	.long Nod52
+	.long Nod53
+	.long Nod54
+	.long Nod55
+	.long Nod56
+	.long Nod57
+	.long Nod58
+	.long Nod59
+	.long Nod60
+	.long Nod61
+	.long Nod62
+	.long Nod63
+	.long Nod64
+
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+	ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */
