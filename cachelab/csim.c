@@ -38,11 +38,13 @@ int eviction_count = 0;
 /* ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ *
  * Declaration of struct, variables and functions
  * ■■■■                                                                 ■■■■■■ */
-#define MISS 10
-#define HIT 20
-#define MISS_AND_EVICTION 30
-#define MISS_AND_HIT 40
-#define MISS_EVICTION_AND_HIT 50
+#define MISS 1
+#define HIT 2
+#define MISS_AND_EVICTION 3
+#define MISS_AND_HIT 4
+#define MISS_EVICTION_AND_HIT 5
+
+#define DEBUG
 
 typedef struct {
 	int valid; 	/* valid bit per line */
@@ -111,6 +113,7 @@ int main(int argc, char* argv[])
             trace_file = optarg;
             break;
         case 'v':
+            flag = 1;
             verbosity = 1;
             break;
         case 'h':
@@ -207,9 +210,7 @@ int initCache(simu_cache *cache, int s, int E)
 	return 0;
 }
 
-/**
- * 分析内存读取命令
- */
+// Parse the instructions in trace files
 int parse_traces(simu_cache *cache, char *line_buf, int s, int E, int b, int flag)
 {
 	int i;
@@ -217,6 +218,12 @@ int parse_traces(simu_cache *cache, char *line_buf, int s, int E, int b, int fla
 	int addr;
 	int selset, tag;
 	sscanf(line_buf, " %c %x", &opt, &addr);
+    #ifdef DEBUG
+        // printf("%c\n", opt);
+        // printf("%x\n", addr);
+        printf(" b: %d, s: %d, E: %d \n", b, s, E);
+    #endif
+
 	selset = getSetBits(addr, s, b);
 	tag = getTagBits(addr, s, b);
 	for (i = 0; i < cache->line_num; i++) {
@@ -279,6 +286,13 @@ int getSetBits(int addr, int s, int b)
 	int mask;
 	mask = 0x7fffffff >> (31 - s);
 	addr = addr >> b;
+
+    #ifdef DEBUG
+        printf(" Set => %X - %d\n", mask, 31-s-b);
+        printf(" Set => %X - %d\n", addr, s+b);
+        printf(" Set => %X\n", mask & addr);
+    #endif
+
 	return (mask & addr);
 }
 
@@ -290,6 +304,13 @@ int getTagBits(int addr, int s, int b)
 	int mask;
 	mask = 0x7fffffff >> (31 - s - b);
 	addr = addr >> (s + b);
+
+    #ifdef DEBUG
+        printf("  Tag => %X - %d\n", mask, 31-s-b);
+        printf("  Tag => %X - %d\n", addr, s+b);
+        printf("  Tag => %X\n", mask & addr);
+    #endif
+
 	return (mask & addr);
 }
 
