@@ -19,127 +19,17 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  *     searches for that string to identify the transpose function to
  *     be graded. 
  */
-char transpose_submit_desc2[] = "Transpose submission";
-void transpose_submit2(int M, int N, int A[N][M], int B[M][N])
-{
-/* ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ *
- * Implementation of custom functions22222
- * ■■■■                                                                 ■■■■■■ */
-
-	int n, sn, m, sm, i, j;
-
-	// printf("N: %d\n", N);
-    switch(N){
-		case 32:
-			for (n = 0; n < 25; n += 8){
-				for(m = 0; m < 25; m += 8 ){
-					if(m != n){
-						for(i = n; i < n+8; i++){
-							for(j =m; j < m+8; j++){
-								B[j][i] = A[i][j];
-							}
-						}
-					}
-				}
-			}
-			for (n = 0; n < 25; n += 8){
-				for(i = n; i < n+8; i++){
-					for(j = n; j < n+8; j++){
-						if(i != j){
-							B[j][i] = A[i][j];
-						}
-					}
-					B[i][i] = A[i][i]; 
-				}			
-			}
-		break;
-		case 64:
-			for(n = 0; n < 57; n +=8){
-				for(m = 0; m < 57; m += 8){
-					if(m != n){
-						sn = n;
-						for(sm = m; sm < m + 5; sm += 4){
-						for(i = sn; i < sn+4; i++){
-							for(j = sm; j < sm+4; j++){
-								B[j][i] = A[i][j];
-							}
-						}
-					} 
-					sn = n+4;
-					for(sm = m + 4; sm > m-1; sm -=4){
-						for(i = sn; i < sn+4; i++){
-							for(j = sm; j < sm+4; j++){
-								B[j][i] = A[i][j];
-							}		
-						}	
-					}
-				}
-				}	
-			}
-			for(n = 0; n < 57; n+=8){
-				sn = n;
-				for(i = sn; i < sn+4; i++){
-					for(j = sn; j < sn+4; j++){
-						if(i != j){
-							B[j][i] = A[i][j];
-						}
-					}
-					B[i][i] = A[i][i];
-				}
-
-				for(i = sn; i < sn+4; i++){
-					for(j = sn+4; j < sn+8; j++){
-						B[j][i] = A[i][j];
-					}
-				}
-				sn = n+4;
-				for(i = sn; i < sn+4; i++){
-					for(j = sn; j < sn+4; j++){
-						if(i != j){
-							B[j][i] = A[i][j];
-						}
-					}
-					B[i][i] = A[i][i];
-				}
-
-				for(i = sn; i < sn+4; i++){
-					for(j = sn-4; j < sn; j++){
-						B[j][i] = A[i][j];
-					}
-				}		
-			}	
-			break;
-		case 67:
-			for(m = 0; m < 61; m += 8){
-				for(n = 0; n < 67; n += 8){
-					for(i = n; i < n + 8 && i < 67; i++){
-						for(j = m; j < m + 8 && j < 61; j++){
-							B[j][i] = A[i][j];
-						}
-					}
-				}
-			}
-		break;
-	}
-    
-	int res = 0;
-	res = is_transpose(M, N, A, B);
-	printf("%d \n", res);
-
-/* ■■■■                                                                 ■■■■■■ */
-/* ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
-}
-
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 {
-    int i,j,k,m,tmp0,tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7;
-/*
- * Idea for M=32 and N=32:
- * Since each block holds 8 numbers and the cache can hold 8 lines
- * (ex.B[0] to B[7]), we can fetch the whole line(A[j][i] to A[j][i+7]) at
- * a time and write it to the right place of B to decrease misses. 
- */
+/* ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ *
+ * Implementation of transpose submit
+ * ■■■■                                                                 ■■■■■■ */
+    
+	// define 12 varibles.
+	int i,j,k,m,tmp0,tmp1,tmp2,tmp3,tmp4,tmp5,tmp6,tmp7;
+
+	// size 32 x 32
     if(M==32)		//B[i][j]=A[j][i]	
     {	
     	for(i=0;i<32;i+=8)	
@@ -163,19 +53,8 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 			B[i+7][j]=tmp7;
 		}
     }			
-/*
- * Idea for M=64 and N=64:
- * This is similar to the idea when dealing with M=32 and N=32,and we can still 
- * fetch a line of A[0] to A[3] at a time, but since the cache is not big 
- * enough, it can hold only 4 lines at a time. So firstly I put the first 
- * 4 elements of  a line in A to its right place in B and put last 4 elements 
- * somewhere else(of course they have already been fetched!). Next, move the 
- * value in the "wrong positions" to its right position and get the right 
- * value for these "wrong positions". Last, repeat the same process for 
- * A[4] to A[7]. Pitifully, there are no more positions to store the last four 
- * elements like before, so I just do simple transformation(I believe here can 
- * be optimized...)
- */
+
+	// size 64 x 64
     else if(M==64)	//B[i][j]=A[j][i]
     {
 	for(i=0;i<64;i+=8)
@@ -232,11 +111,9 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 			}
 		}
     }
-/*
- * Idea for M=61 and N=67:
- * Use blocking! And I tried many block sizes, and I find 17 is a good one:)
- */
-     else if(M==61)	
+
+	// size 61 x 67
+    else if(M==61)	
     {	
 	    for(i=0;i<61;i+=17) 		//B[i][j]=A[j][i]
         	for(j=0;j<67;j+=17) 
@@ -248,6 +125,10 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 			}
         
     }
+
+
+/* ■■■■                                                                 ■■■■■■ */
+/* ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ */
     
 }
 
